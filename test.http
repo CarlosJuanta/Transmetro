@@ -78,7 +78,7 @@ Content-Type: application/json
 # con un cuerpo JSON que es un array (probablemente vacío []) de departamentos.
 
 GET http://localhost:3000/api/departamentos
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJpZF9yb2wiOjEsImlkX2VzdGFjaW9uIjpudWxsLCJpYXQiOjE3NTkwOTQ1NjksImV4cCI6MTc1OTE4MDk2OX0.sDVWKqsmlbclUVxYNDcFpklMpJNb0VA9143Phe3ppng
+Authorization: Bearer INGRESAR TOKEN AQUI
 
 
 ### Prueba 5: Crear un nuevo departamento CON UN TOKEN VÁLIDO
@@ -91,7 +91,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxL
 
 POST http://localhost:3000/api/departamentos
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJpZF9yb2wiOjEsImlkX2VzdGFjaW9uIjpudWxsLCJpYXQiOjE3NTkwOTQ1NjksImV4cCI6MTc1OTE4MDk2OX0.sDVWKqsmlbclUVxYNDcFpklMpJNb0VA9143Phe3ppng
+Authorization: Bearer INGRESAR TOKEN AQUI
 
 {
   "nombre": "Guatemala"
@@ -108,7 +108,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxL
 
 POST http://localhost:3000/api/departamentos
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJpZF9yb2wiOjEsImlkX2VzdGFjaW9uIjpudWxsLCJpYXQiOjE3NTkwOTQ1NjksImV4cCI6MTc1OTE4MDk2OX0.sDVWKqsmlbclUVxYNDcFpklMpJNb0VA9143Phe3ppng
+Authorization: Bearer INGRESAR TOKEN AQUI
 
 {
   "nombre": "Guatemala"
