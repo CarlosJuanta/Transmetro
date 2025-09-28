@@ -1,0 +1,41 @@
+### Prueba de Login Exitoso para el Administrador
+# Envía las credenciales correctas que acabamos de insertar en la base de datos.
+#
+# Resultado esperado: HTTP/1.1 200 OK
+# con un cuerpo JSON que contiene el token y los datos del usuario.
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "correo": "admin@transmetro.gt",
+  "contrasenia": "admin123"
+}
+
+### Prueba de Login Fallido (Contraseña Incorrecta)
+# Envía el correo correcto pero una contraseña incorrecta.
+#
+# Resultado esperado: HTTP/1.1 401 Unauthorized
+# con el mensaje "Credenciales inválidas."
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "correo": "admin@transmetro.gt",
+  "contrasenia": "contraseña_incorrecta"
+}
+
+
+### Prueba de Login Fallido (Faltan Datos)
+# Envía la petición sin el campo de contraseña.
+#
+# Resultado esperado: HTTP/1.1 400 Bad Request
+# con el mensaje "El correo y la contraseña son obligatorios."
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "correo": "admin@transmetro.gt"
+}

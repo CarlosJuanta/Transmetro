@@ -1,0 +1,9 @@
+#cosas que no se van a subir a Git  #
+node_modules/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.DS_Store
+Thumbs.db
