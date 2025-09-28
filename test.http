@@ -1,8 +1,4 @@
-### Prueba de Login Exitoso para el Administrador
-# Envía las credenciales correctas que acabamos de insertar en la base de datos.
-#
-# Resultado esperado: HTTP/1.1 200 OK
-# con un cuerpo JSON que contiene el token y los datos del usuario.
+
 
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
@@ -13,10 +9,6 @@ Content-Type: application/json
 }
 
 ### Prueba de Login Fallido (Contraseña Incorrecta)
-# Envía el correo correcto pero una contraseña incorrecta.
-#
-# Resultado esperado: HTTP/1.1 401 Unauthorized
-# con el mensaje "Credenciales inválidas."
 
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
@@ -28,14 +20,96 @@ Content-Type: application/json
 
 
 ### Prueba de Login Fallido (Faltan Datos)
-# Envía la petición sin el campo de contraseña.
-#
-# Resultado esperado: HTTP/1.1 400 Bad Request
-# con el mensaje "El correo y la contraseña son obligatorios."
 
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
   "correo": "admin@transmetro.gt"
+}
+
+
+
+#####################################  SIGUIENTES PRUEBAS #######################################
+
+# -------------------------------------------
+# PRUEBAS DEL MÓDULO DE DEPARTAMENTOS
+# -------------------------------------------
+
+### Prueba 1: Intentar obtener departamentos SIN TOKEN
+# Esta prueba debe fallar. El middleware 'protect' debería detenerla.
+#
+# Resultado esperado: HTTP/1.1 401 Unauthorized
+# con el mensaje "No autorizado. No se proporcionó un token."
+
+GET http://localhost:3000/api/departamentos
+
+
+### Prueba 2: Intentar obtener departamentos CON UN TOKEN INVÁLIDO
+# Esta prueba también debe fallar. El middleware debería detectar que el token es falso.
+#
+# Resultado esperado: HTTP/1.1 401 Unauthorized
+# con el mensaje "No autorizado. El token no es válido o ha expirado."
+
+GET http://localhost:3000/api/departamentos
+Authorization: Bearer un.token.falso_o_expirado
+
+
+### Prueba 3: OBTENER UN TOKEN VÁLIDO (Paso previo necesario)
+# Primero, iniciamos sesión como el administrador para obtener un token fresco y válido.
+#
+# >> Guarda el valor del "token" de la respuesta para usarlo en la siguiente prueba.
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "correo": "admin@transmetro.gt",
+  "contrasenia": "admin123"
+}
+
+### Prueba 4: Obtener departamentos CON UN TOKEN VÁLIDO
+# Esta prueba debe ser exitosa. El middleware 'protect' debería dejarla pasar.
+#
+# >> ANTES DE EJECUTAR: Copia el token de la respuesta de la Prueba 3
+# >> y pégalo después de "Bearer ".
+#
+# Resultado esperado: HTTP/1.1 200 OK
+# con un cuerpo JSON que es un array (probablemente vacío []) de departamentos.
+
+GET http://localhost:3000/api/departamentos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJpZF9yb2wiOjEsImlkX2VzdGFjaW9uIjpudWxsLCJpYXQiOjE3NTkwOTQ1NjksImV4cCI6MTc1OTE4MDk2OX0.sDVWKqsmlbclUVxYNDcFpklMpJNb0VA9143Phe3ppng
+
+
+### Prueba 5: Crear un nuevo departamento CON UN TOKEN VÁLIDO
+# Esta prueba también debe ser exitosa.
+#
+# >> ANTES DE EJECUTAR: Usa el mismo token válido de la prueba anterior.
+#
+# Resultado esperado: HTTP/1.1 201 Created
+# con un cuerpo JSON que contiene el nuevo departamento, ej: {"id": 1, "nombre": "Guatemala"}
+
+POST http://localhost:3000/api/departamentos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJpZF9yb2wiOjEsImlkX2VzdGFjaW9uIjpudWxsLCJpYXQiOjE3NTkwOTQ1NjksImV4cCI6MTc1OTE4MDk2OX0.sDVWKqsmlbclUVxYNDcFpklMpJNb0VA9143Phe3ppng
+
+{
+  "nombre": "Guatemala"
+}
+
+
+### Prueba 6: Intentar crear un departamento DUPLICADO
+# Esta prueba debe fallar con un error específico de conflicto.
+#
+# >> ANTES DE EJECUTAR: Usa el mismo token válido.
+#
+# Resultado esperado: HTTP/1.1 409 Conflict
+# con el mensaje "Ya existe un departamento con ese nombre."
+
+POST http://localhost:3000/api/departamentos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjoxLCJpZF9yb2wiOjEsImlkX2VzdGFjaW9uIjpudWxsLCJpYXQiOjE3NTkwOTQ1NjksImV4cCI6MTc1OTE4MDk2OX0.sDVWKqsmlbclUVxYNDcFpklMpJNb0VA9143Phe3ppng
+
+{
+  "nombre": "Guatemala"
 }
