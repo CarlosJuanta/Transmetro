@@ -6,6 +6,7 @@ const municipalidadRoutes = require('./municipalidad.routes');
 const estacionRoutes = require('./estacion.routes');
 const lineaRoutes = require('./linea.routes');
 const busRoutes = require('./bus.routes');
+const operacionRoutes = require('./operacion.routes');
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/municipalidades', municipalidadRoutes);
 router.use('/estaciones', estacionRoutes);
 router.use('/lineas', lineaRoutes);
 router.use('/buses', busRoutes);
+router.use('/operaciones', operacionRoutes);
 
 module.exports = router;
