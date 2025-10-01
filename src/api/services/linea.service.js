@@ -11,10 +11,7 @@ const create = async (nombre, id_municipalidad) => {
 const getAll = async () => {
   const [rows] = await pool.execute(
     `SELECT 
-      l.id_linea, 
-      l.nombre, 
-      m.id_municipalidad,
-      m.nombre AS nombre_municipalidad
+      l.id_linea, l.nombre, m.id_municipalidad, m.nombre AS nombre_municipalidad
      FROM LINEA l
      JOIN MUNICIPALIDAD m ON l.id_municipalidad = m.id_municipalidad
      ORDER BY l.nombre ASC`
@@ -25,10 +22,7 @@ const getAll = async () => {
 const getById = async (id) => {
   const [lineaRows] = await pool.execute(
     `SELECT 
-      l.id_linea, 
-      l.nombre, 
-      m.id_municipalidad,
-      m.nombre AS nombre_municipalidad
+      l.id_linea, l.nombre, m.id_municipalidad, m.nombre AS nombre_municipalidad
      FROM LINEA l
      JOIN MUNICIPALIDAD m ON l.id_municipalidad = m.id_municipalidad
      WHERE l.id_linea = ?`,
@@ -41,10 +35,7 @@ const getById = async (id) => {
 
   const [rutaRows] = await pool.execute(
     `SELECT 
-      r.numero_parada,
-      r.distancia_siguiente_parada,
-      e.id_estacion,
-      e.nombre AS nombre_estacion
+      r.numero_parada, r.distancia_siguiente_parada, e.id_estacion, e.nombre AS nombre_estacion
      FROM RUTA r
      JOIN ESTACION e ON r.id_estacion = e.id_estacion
      WHERE r.id_linea = ?
@@ -85,6 +76,23 @@ const updateRuta = async (id_linea, ruta) => {
           [id_linea, parada.id_estacion, parada.numero_parada, parada.distancia_siguiente_parada]
         );
       }
+    }
+
+    const nuevoNumeroDeEstaciones = ruta ? ruta.length : 0;
+    if (nuevoNumeroDeEstaciones > 0) {
+        const [busRows] = await connection.execute('SELECT COUNT(*) as totalBuses FROM BUS WHERE id_linea = ?', [id_linea]);
+        const totalBuses = busRows[0].totalBuses;
+        const limiteMaximo = nuevoNumeroDeEstaciones * 2;
+
+        if (totalBuses > limiteMaximo) {
+            await connection.rollback();
+            const err = new Error(
+                `No se puede guardar la ruta. La línea tiene ${totalBuses} buses asignados, ` +
+                `pero con ${nuevoNumeroDeEstaciones} estaciones, el límite máximo es de ${limiteMaximo} buses.`
+            );
+            err.code = 'BUSINESS_RULE_VIOLATION';
+            throw err;
+        }
     }
 
     await connection.commit();

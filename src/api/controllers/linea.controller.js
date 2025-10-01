@@ -91,6 +91,9 @@ const updateRutaDeLinea = async (req, res) => {
     const lineaActualizada = await lineaService.getById(id_linea);
     res.status(200).json(lineaActualizada);
   } catch (error) {
+    if (error.code === 'BUSINESS_RULE_VIOLATION') {
+        return res.status(409).json({ message: error.message });
+    }
     if (error.code === 'ER_NO_REFERENCED_ROW_2') {
       return res.status(404).json({ message: 'La ruta contiene una estación que no existe.' });
     }
