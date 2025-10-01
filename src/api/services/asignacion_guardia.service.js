@@ -62,8 +62,45 @@ const getByAccesoId = async (id_acceso) => {
 };
 
 const remove = async (id_asignacion) => {
-    const [result] = await pool.execute('DELETE FROM ASIGNACION_GUARDIA WHERE id_asignacion = ?', [id_asignacion]);
-    return result.affectedRows;
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // 1. Obtener el id_acceso de la asignación que se va a borrar
+        const [rows] = await connection.execute('SELECT id_acceso FROM ASIGNACION_GUARDIA WHERE id_asignacion = ?', [id_asignacion]);
+        
+        if (rows.length === 0) {
+            await connection.rollback();
+            // Retornamos 0 para que el controlador devuelva "Asignación no encontrada"
+            return 0;
+        }
+        const { id_acceso } = rows[0];
+
+        // 2. Contar cuántas asignaciones totales tiene ese acceso
+        const [countRows] = await connection.execute('SELECT COUNT(*) as total FROM ASIGNACION_GUARDIA WHERE id_acceso = ?', [id_acceso]);
+        const totalAsignaciones = countRows[0].total;
+
+        // 3. Aplicar la regla de negocio
+        if (totalAsignaciones <= 1) {
+            await connection.rollback();
+            // Lanzar un error específico que el controlador pueda entender
+            const err = new Error('No se puede eliminar la última asignación de guardia para este acceso.');
+            err.code = 'BUSINESS_RULE_VIOLATION'; // Usamos un código de error personalizado
+            throw err;
+        }
+
+        // 4. Si la regla se cumple, proceder con la eliminación
+        const [result] = await connection.execute('DELETE FROM ASIGNACION_GUARDIA WHERE id_asignacion = ?', [id_asignacion]);
+        
+        await connection.commit();
+        return result.affectedRows;
+
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
 };
 
 module.exports = {

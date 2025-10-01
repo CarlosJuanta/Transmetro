@@ -20,20 +20,25 @@ const registrarLlegada = async (id_bus, id_estacion, pasajeros_registrados) => {
     let alertaCreada = null;
     const ocupacion = pasajeros_registrados / capacidadBus;
 
-    // Requisito #14: Alerta por sobredemanda (si la demanda es >= 50% de la capacidad)
-    if (ocupacion >= 0.5) {
+    const UMBRAL_SOBREDEMANDA = 0.50; // 50%
+    const UMBRAL_BAJA_OCUPACION = 0.25; // 25%
+
+    const TIPO_ALERTA_SOBREDEMANDA = 1;
+    const TIPO_ALERTA_BAJA_OCUPACION = 2;
+    const ESTADO_ALERTA_GENERADA = 1;
+
+    if (ocupacion >= UMBRAL_SOBREDEMANDA) {
+      const descripcion = `Demanda del ${Math.round(ocupacion * 100)}% reportada.`;
       const [alertaResult] = await connection.execute(
         'INSERT INTO ALERTA (id_registro_operacion, id_tipo_alerta, id_estado_alerta, fecha_hora, descripcion) VALUES (?, ?, ?, NOW(), ?)',
-        [newRegistroId, 1, 1, `Demanda del ${Math.round(ocupacion * 100)}% reportada.`] // 1: SOBREDEMANDA, 1: GENERADA
+        [newRegistroId, TIPO_ALERTA_SOBREDEMANDA, ESTADO_ALERTA_GENERADA, descripcion]
       );
       alertaCreada = { id: alertaResult.insertId, tipo: 'SOBREDEMANDA' };
-    }
-
-    // Requisito #15: Alerta por baja ocupación (si la ocupación es < 25%)
-    if (ocupacion < 0.25) {
+    } else if (ocupacion <= UMBRAL_BAJA_OCUPACION) {
+      const descripcion = `Ocupación del ${Math.round(ocupacion * 100)}% reportada.`;
       const [alertaResult] = await connection.execute(
         'INSERT INTO ALERTA (id_registro_operacion, id_tipo_alerta, id_estado_alerta, fecha_hora, descripcion) VALUES (?, ?, ?, NOW(), ?)',
-        [newRegistroId, 2, 1, `Ocupación del ${Math.round(ocupacion * 100)}% reportada.`] // 2: BAJA_OCUPACION, 1: GENERADA
+        [newRegistroId, TIPO_ALERTA_BAJA_OCUPACION, ESTADO_ALERTA_GENERADA, descripcion]
       );
       alertaCreada = { id: alertaResult.insertId, tipo: 'BAJA_OCUPACION' };
     }
