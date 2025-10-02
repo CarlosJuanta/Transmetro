@@ -13,6 +13,7 @@ const personalSeguridadRoutes = require('./personal_seguridad.routes');
 const asignacionPilotoRoutes = require('./asignacion_piloto.routes'); 
 const asignacionGuardiaRoutes = require('./asignacion_guardia.routes');
 const reporteRoutes = require('./reporte.routes');
+const parqueoRoutes = require('./parqueo.routes');
 
 const router = express.Router();
 
@@ -30,5 +31,6 @@ router.use('/personal-seguridad', personalSeguridadRoutes);
 router.use('/asignaciones-pilotos', asignacionPilotoRoutes); 
 router.use('/asignaciones-guardias', asignacionGuardiaRoutes);
 router.use('/reportes', reporteRoutes);
+router.use('/parqueos', parqueoRoutes);
 
 module.exports = router;
