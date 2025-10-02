@@ -10,6 +10,12 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  
+  // -- AÑADIR ESTAS LÍNEAS --
+  ssl: {
+    rejectUnauthorized: true
+  }
+  // -- FIN DE LAS LÍNEAS A AÑADIR --
 });
 
 module.exports = pool;
