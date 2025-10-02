@@ -9,28 +9,32 @@ const create = async (nombre, id_municipalidad) => {
 };
 
 const getAll = async () => {
-  const [rows] = await pool.execute(
+  const [estaciones] = await pool.execute(
     `SELECT 
-      e.id_estacion, 
-      e.nombre, 
-      m.id_municipalidad,
-      m.nombre AS nombre_municipalidad,
+      e.id_estacion, e.nombre, m.id_municipalidad, m.nombre AS nombre_municipalidad,
       d.nombre AS nombre_departamento
      FROM ESTACION e
      JOIN MUNICIPALIDAD m ON e.id_municipalidad = m.id_municipalidad
      JOIN DEPARTAMENTO d ON m.id_departamento = d.id_departamento
      ORDER BY e.nombre ASC`
   );
-  return rows;
+
+  const [accesos] = await pool.execute('SELECT id_acceso, nombre, id_estacion FROM ACCESO ORDER BY nombre ASC');
+  const [parqueos] = await pool.execute('SELECT id_parqueo, nombre, id_estacion FROM PARQUEO ORDER BY nombre ASC');
+
+  const estacionesCompletas = estaciones.map(estacion => ({
+    ...estacion,
+    accesos: accesos.filter(a => a.id_estacion === estacion.id_estacion),
+    parqueos: parqueos.filter(p => p.id_estacion === estacion.id_estacion)
+  }));
+
+  return estacionesCompletas;
 };
 
 const getById = async (id) => {
   const [estacionRows] = await pool.execute(
     `SELECT 
-      e.id_estacion, 
-      e.nombre, 
-      m.id_municipalidad,
-      m.nombre AS nombre_municipalidad,
+      e.id_estacion, e.nombre, m.id_municipalidad, m.nombre AS nombre_municipalidad,
       d.nombre AS nombre_departamento
      FROM ESTACION e
      JOIN MUNICIPALIDAD m ON e.id_municipalidad = m.id_municipalidad
@@ -38,10 +42,7 @@ const getById = async (id) => {
      WHERE e.id_estacion = ?`,
     [id]
   );
-
-  if (estacionRows.length === 0) {
-    return null;
-  }
+  if (estacionRows.length === 0) return null;
 
   const [accesosRows] = await pool.execute('SELECT * FROM ACCESO WHERE id_estacion = ?', [id]);
   const [parqueosRows] = await pool.execute('SELECT * FROM PARQUEO WHERE id_estacion = ?', [id]);
@@ -49,7 +50,6 @@ const getById = async (id) => {
   const estacion = estacionRows[0];
   estacion.accesos = accesosRows;
   estacion.parqueos = parqueosRows;
-
   return estacion;
 };
 
