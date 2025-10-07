@@ -6,5 +6,7 @@ const router = express.Router();
 
 router.get('/', protect, authorize(1), departamentoController.getAllDepartamentos);
 router.post('/', protect, authorize(1), departamentoController.createDepartamento);
+router.put('/:id', protect, authorize(1), departamentoController.updateDepartamento);
+router.delete('/:id', protect, authorize(1), departamentoController.deleteDepartamento);
 
 module.exports = router;

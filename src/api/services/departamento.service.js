@@ -13,7 +13,25 @@ const create = async (nombre) => {
   return { id: result.insertId, nombre };
 };
 
+const update = async (id, nombre) => {
+    const [result] = await pool.execute(
+      'UPDATE DEPARTAMENTO SET nombre = ? WHERE id_departamento = ?',
+      [nombre, id]
+    );
+    return result.affectedRows;
+};
+
+const remove = async (id) => {
+    const [result] = await pool.execute(
+      'DELETE FROM DEPARTAMENTO WHERE id_departamento = ?',
+      [id]
+    );
+    return result.affectedRows;
+};
+
 module.exports = {
   getAll,
   create,
+  update,
+  remove
 };
