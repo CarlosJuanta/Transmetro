@@ -1,21 +1,24 @@
 const mysql = require('mysql2/promise');
 const config = require('./index');
 
-const pool = mysql.createPool({
+const dbConfig = {
   host: config.dbHost,
   user: config.dbUser,
   password: config.dbPassword,
   database: config.dbName,
   port: config.dbPort,
   waitForConnections: true,
-  connectionLimit: 20,
+  connectionLimit: 10, 
   queueLimit: 0,
-  
-  // -- AÑADIR ESTAS LÍNEAS --
-  ssl: {
+};
+
+
+if (process.env.DB_SSL === 'true') {
+  dbConfig.ssl = {
     rejectUnauthorized: true
-  }
-  // -- FIN DE LAS LÍNEAS A AÑADIR --
-});
+  };
+}
+
+const pool = mysql.createPool(dbConfig);
 
 module.exports = pool;
