@@ -3,7 +3,7 @@ const pilotoService = require('../services/piloto.service');
 const createPiloto = async (req, res) => {
   const pilotoData = req.body;
 
-  // Validación básica de campos obligatorios
+ 
   if (!pilotoData.nombre || !pilotoData.apellido || !pilotoData.dpi || !pilotoData.fecha_nacimiento || !pilotoData.direccion_residencia || !pilotoData.telefono_celular) {
     return res.status(400).json({ message: 'Todos los campos personales del piloto son obligatorios.' });
   }
@@ -67,7 +67,7 @@ const deletePiloto = async (req, res) => {
     if (affectedRows === 0) {
       return res.status(404).json({ message: 'Piloto no encontrado.' });
     }
-    res.status(204).send(); // 204 No Content: éxito, pero no se devuelve nada
+    res.status(204).send(); 
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar el piloto.' });
   }

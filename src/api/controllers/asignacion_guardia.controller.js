@@ -46,9 +46,9 @@ const deleteAsignacion = async (req, res) => {
     }
     res.status(204).send();
   } catch (error) {
-    // NUEVO: Manejar el error de la regla de negocio
+ 
     if (error.code === 'BUSINESS_RULE_VIOLATION') {
-        return res.status(409).json({ message: error.message }); // 409 Conflict
+        return res.status(409).json({ message: error.message }); 
     }
     res.status(500).json({ message: 'Error al eliminar la asignación.' });
   }

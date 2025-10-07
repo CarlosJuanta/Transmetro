@@ -57,7 +57,7 @@ const getById = async (id) => {
 const update = async (id, userData) => {
     const { correo, nombre, apellido, id_rol, id_estacion } = userData;
     
-    // Nota: La contraseña no se actualiza aquí. Se maneja en un endpoint separado.
+   
     const [result] = await pool.execute(
         'UPDATE USUARIO SET correo = ?, nombre = ?, apellido = ?, id_rol = ?, id_estacion = ? WHERE id_usuario = ?',
         [correo, nombre, apellido, id_rol, id_estacion || null, id]

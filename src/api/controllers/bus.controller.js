@@ -7,7 +7,7 @@ const createBus = async (req, res) => {
     return res.status(400).json({ message: 'Los campos placa, capacidad_maxima y id_parqueo son obligatorios.' });
   }
 
-  // Si id_linea no se proporciona o viene vacío, lo tratamos como NULL para la BD
+ 
   if (id_linea === undefined || id_linea === '') {
     id_linea = null;
   }

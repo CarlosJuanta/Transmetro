@@ -10,7 +10,7 @@ const registrarLlegada = async (req, res) => {
   try {
     const resultado = await operacionService.registrarLlegada(id_bus, id_estacion, pasajeros_registrados);
     
-    // El frontend recibirá este objeto y sabrá si debe tomar una acción especial
+   
     res.status(201).json(resultado);
   } catch (error) {
     if (error.code === 'ER_NO_REFERENCED_ROW_2') {
