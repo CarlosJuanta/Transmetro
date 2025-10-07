@@ -1,24 +1,21 @@
 const mysql = require('mysql2/promise');
 const config = require('./index');
 
-const dbConfig = {
+const pool = mysql.createPool({
   host: config.dbHost,
   user: config.dbUser,
   password: config.dbPassword,
   database: config.dbName,
   port: config.dbPort,
   waitForConnections: true,
-  connectionLimit: 10, 
+  connectionLimit: 20,
   queueLimit: 0,
-};
+  
 
-
-if (process.env.DB_SSL === 'true') {
-  dbConfig.ssl = {
+  ssl: {
     rejectUnauthorized: true
-  };
-}
+  }
 
-const pool = mysql.createPool(dbConfig);
+});
 
 module.exports = pool;
