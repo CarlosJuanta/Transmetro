@@ -8,6 +8,7 @@ router.post('/', protect, authorize(1), usuarioController.createUsuario);
 router.get('/', protect, authorize(1), usuarioController.getAllUsuarios);
 router.get('/:id_usuario', protect, authorize(1), usuarioController.getUsuarioById);
 router.put('/:id_usuario', protect, authorize(1), usuarioController.updateUsuario);
+router.put('/:id_usuario/reset-password', protect, authorize(1), usuarioController.resetPassword);
 router.delete('/:id_usuario', protect, authorize(1), usuarioController.deleteUsuario);
 
 module.exports = router;
